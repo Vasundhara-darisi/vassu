@@ -245,38 +245,13 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* 3. SKILLS - Interactive Sliding */}
+      {/* 3. SKILLS - Clean Cards */}
       {skills && skills.length > 0 && (
-        <section id="skills" className="skills-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <section id="skills" className="skills-section">
           
-          {/* Dynamic Background Elements */}
-          <motion.div 
-            animate={{ y: [0, 50, 0], rotate: [0, 90, 0] }} 
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, zIndex: 0 }}
-          >
-            <div style={{ width: '40px', height: '40px', border: '2px solid var(--accent-gold)', borderRadius: '10px', transform: 'rotate(45deg)' }}></div>
-          </motion.div>
-
-          <motion.div 
-            animate={{ y: [0, -40, 0], x: [0, 30, 0], rotate: [0, -180, 0] }} 
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            style={{ position: 'absolute', bottom: '20%', right: '15%', opacity: 0.2, zIndex: 0 }}
-          >
-            <div style={{ width: '30px', height: '30px', borderRadius: '50%', border: '2px solid var(--accent-orange)' }}></div>
-          </motion.div>
-
-          <motion.div 
-            animate={{ x: [0, -50, 0], rotate: [0, 360, 0] }} 
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            style={{ position: 'absolute', top: '50%', right: '5%', opacity: 0.15, zIndex: 0 }}
-          >
-            <Sparkles size={40} color="var(--accent-gold)" />
-          </motion.div>
-
           <div className="container" style={{ position: 'relative', zIndex: 1 }}>
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center">
-              <h2 className="section-title">Technical <span className="text-gradient-ethereal">Skills.</span></h2>
+              <h2 className="section-title">Technical <span className="text-gradient-gold">Skills.</span></h2>
               <p className="section-subtitle">Technologies I work with to bring ideas to life.</p>
             </motion.div>
           </div>
@@ -309,20 +284,21 @@ export const Home = () => {
                 
                 return (
                 <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   key={skill.id || idx} 
                   className="skill-card-vertical"
-                  style={{ y: yBg }}
                   animate={{ y: [0, -10, 0] }}
                   transition={{ 
-                    duration: 4 + (idx % 3), 
-                    repeat: Infinity, 
-                    ease: "easeInOut", 
-                    delay: idx * 0.1 
+                    y: {
+                      duration: 4 + (idx % 3), 
+                      repeat: Infinity, 
+                      ease: "easeInOut", 
+                      delay: idx * 0.2
+                    },
+                    opacity: { duration: 0.5 }
                   }}
-                  whileHover={{ y: -15, scale: 1.05 }}
                 >
                   <div className="skill-icon-wrap">
                     {resolvedIcon ? (

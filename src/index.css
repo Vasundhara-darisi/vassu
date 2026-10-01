@@ -553,11 +553,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   width: 100%;
 }
 @media(min-width: 576px) {
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(min-width: 768px) {
   .skills-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media(min-width: 992px) {
@@ -565,8 +568,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .skill-card-vertical {
-  background: linear-gradient(135deg, #E6B969 0%, #C28B23 100%); /* Premium Metallic Gold */
-  border: 1px solid #FADF95;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border-light);
   border-radius: var(--radius-lg);
   padding: 2rem 1.5rem;
   display: flex;
@@ -574,37 +578,35 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   text-align: center;
   transition: all var(--transition-normal);
-  cursor: default;
   height: 100%;
 }
 .skill-card-vertical:hover {
-  background: linear-gradient(135deg, #F3C97C 0%, #D29A2E 100%);
-  border-color: #FFF;
-  box-shadow: 0 8px 25px rgba(194, 139, 35, 0.4);
+  border-color: rgba(230, 161, 71, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px var(--shadow-strong);
 }
 .skill-icon-wrap {
   width: 60px; height: 60px;
-  background: #1A1105; /* Very dark brown to contrast the gold */
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: var(--bg-surface);
+  border: 1px solid var(--glass-border-light);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 .skill-title {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #1A1105; /* Dark brown/black for readability on gold */
+  color: var(--text-primary);
 }
 .skill-cat {
   font-size: 0.8rem;
-  color: #4A3315; /* Darker brown */
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* --- 4. PROJECTS SECTION --- */
