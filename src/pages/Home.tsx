@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
 import { getPortfolioData, addSubmission } from '../firebase/services';
 import type { PortfolioData } from '../types';
 import { MapPin, Mail, ExternalLink, Code2, Briefcase, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, Send, FileText, ArrowRight } from 'lucide-react';
