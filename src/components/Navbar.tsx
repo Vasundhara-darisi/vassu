@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, Terminal, Sun, Moon } from 'lucide-react';
+import { Menu, X, Terminal, Sun, Moon, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = () => {
@@ -27,6 +27,10 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Close menu on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,30 +51,19 @@ export const Navbar = () => {
 
   return (
     <>
-      <header
-        style={{
-          position: 'fixed',
-          top: isScrolled ? '1rem' : '2rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 50,
-          transition: 'all var(--transition-normal)',
-          width: 'calc(100% - 2rem)',
-          maxWidth: '800px',
-        }}
-      >
+      <header className={`nav-header ${isScrolled ? 'scrolled' : ''}`}>
         <div style={{
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
           padding: '0.75rem 1.5rem',
-          background: isScrolled ? 'var(--nav-bg)' : 'transparent',
-          backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-          border: isScrolled ? '1px solid var(--glass-border-light)' : '1px solid transparent',
+          background: isScrolled ? 'var(--nav-bg)' : 'rgba(25,15,5,0.4)',
+          backdropFilter: 'blur(30px)',
+          border: isScrolled ? '1px solid var(--glass-border-light)' : '1px solid rgba(255,255,255,0.05)',
           borderRadius: 'var(--radius-pill)',
-          boxShadow: isScrolled ? '0 10px 40px var(--shadow-strong)' : 'none'
+          boxShadow: isScrolled ? '0 10px 40px var(--shadow-strong)' : '0 10px 30px rgba(0,0,0,0.2)'
         }}>
-          <NavLink to="/" onClick={() => window.scrollTo(0,0)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)', fontFamily: 'Clash Display', textDecoration: 'none' }}>
+          <NavLink to="/" onClick={scrollToTop} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)', fontFamily: 'Clash Display', textDecoration: 'none' }}>
             <Terminal size={20} className="text-gradient-gold" />
             <span style={{ display: 'none' }} className="nav-brand-text">Vasundhara</span>
           </NavLink>
@@ -81,20 +74,15 @@ export const Navbar = () => {
               <a 
                 key={link.name} 
                 href={link.path}
+                className="nav-link-hover"
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 500,
                   color: 'var(--text-secondary)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.1em',
-                  transition: 'color var(--transition-fast)',
+                  transition: 'all var(--transition-fast)',
                   textDecoration: 'none'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = 'var(--text-primary)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
               >
                 {link.name}
@@ -102,34 +90,34 @@ export const Navbar = () => {
             ))}
           </nav>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button 
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0.5rem',
-                borderRadius: '50%',
-                transition: 'background var(--transition-fast)'
-              }}
-              onMouseOver={e => e.currentTarget.style.background = 'var(--glass-border-light)'}
-              onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+              className="icon-btn-hover"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
+            
+            {/* Scroll Up Feature Button */}
+            {isScrolled && (
+              <motion.button 
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={scrollToTop}
+                aria-label="Scroll to top"
+                className="icon-btn-hover scroll-up-btn text-gradient-orange"
+              >
+                <ArrowUp size={20} />
+              </motion.button>
+            )}
 
             {/* Mobile Toggle */}
             <div className="mobile-toggle" style={{ display: 'flex', alignItems: 'center' }}>
               <button 
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open menu"
-                style={{ color: 'var(--text-primary)', background: 'transparent', border: 'none', padding: '0.5rem' }}
+                className="icon-btn-hover text-gradient-gold"
               >
                 <Menu size={24} />
               </button>
@@ -138,7 +126,7 @@ export const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Click-Up Bottom Sheet */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -146,63 +134,75 @@ export const Navbar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
               style={{
                 position: 'fixed',
                 inset: 0,
-                backgroundColor: 'var(--nav-bg)',
+                backgroundColor: 'rgba(0,0,0,0.6)',
                 backdropFilter: 'blur(8px)',
                 zIndex: 90
               }}
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               style={{
                 position: 'fixed',
-                top: 0,
-                right: 0,
                 bottom: 0,
-                width: '80%',
-                maxWidth: '300px',
+                left: 0,
+                right: 0,
+                height: '75vh',
                 background: 'var(--bg-secondary)',
                 zIndex: 100,
                 padding: '2rem',
-                borderLeft: '1px solid var(--glass-border-light)',
+                borderTop: '1px solid var(--accent-orange)',
+                borderTopLeftRadius: '2rem',
+                borderTopRightRadius: '2rem',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 -20px 60px rgba(230,161,71,0.15)'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
-                <span style={{ fontWeight: 600, fontSize: '1.25rem', fontFamily: 'Clash Display', color: 'var(--text-primary)' }}>Navigation</span>
+                <span style={{ fontWeight: 600, fontSize: '1.5rem', fontFamily: 'Clash Display', color: 'var(--text-primary)' }}>Navigate</span>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
-                  style={{ color: 'var(--text-secondary)', background: 'transparent', border: 'none', padding: '0.5rem' }}
+                  className="icon-btn-hover"
+                  style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}
                 >
                   <X size={24} />
                 </button>
               </div>
 
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {navLinks.map((link) => (
-                  <a
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto' }}>
+                {navLinks.map((link, idx) => (
+                  <motion.a
                     key={link.name}
                     href={link.path}
                     onClick={() => setMobileMenuOpen(false)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
                     style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 500,
+                      fontSize: '1.75rem',
+                      fontWeight: 600,
                       color: 'var(--text-primary)',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.1em',
-                      textDecoration: 'none'
+                      letterSpacing: '0.05em',
+                      textDecoration: 'none',
+                      padding: '1rem',
+                      background: 'rgba(255,255,255,0.02)',
+                      borderRadius: '1rem',
+                      border: '1px solid rgba(255,255,255,0.05)'
                     }}
+                    whileHover={{ scale: 1.02, x: 10, borderColor: 'var(--accent-orange)' }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {link.name}
-                  </a>
+                  </motion.a>
                 ))}
               </nav>
             </motion.div>
@@ -211,12 +211,67 @@ export const Navbar = () => {
       </AnimatePresence>
 
       <style>{`
+        .nav-header {
+          position: fixed;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 50;
+          transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+          width: calc(100% - 2rem);
+          max-width: 800px;
+          top: 2rem;
+        }
+        .nav-header.scrolled {
+          top: 1rem;
+        }
+        .icon-btn-hover {
+          background: transparent;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+          display: flex;
+          alignItems: center;
+          justifyContent: center;
+          padding: 0.5rem;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+        }
+        .icon-btn-hover:hover {
+          background: var(--glass-border-light);
+          transform: scale(1.1);
+        }
+        .icon-btn-hover:active {
+          transform: scale(0.95);
+        }
+        .nav-link-hover:hover {
+          color: var(--text-primary) !important;
+          transform: translateY(-2px);
+        }
         .desktop-nav {
           display: none !important;
         }
         .nav-brand-text {
           display: block !important;
         }
+        
+        /* MOBILE RESPONSIVE CLICK-UP DOCK */
+        @media (max-width: 767px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .mobile-toggle {
+            display: flex !important;
+          }
+          .nav-header {
+            top: auto !important;
+            bottom: 2rem !important;
+          }
+          .nav-header.scrolled {
+            bottom: 1.5rem !important;
+            top: auto !important;
+          }
+        }
+        
         @media (min-width: 768px) {
           .desktop-nav {
             display: flex !important;

@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
-import { getPortfolioData, addSubmission } from '../firebase/services';
+import { getPortfolioData } from '../firebase/services';
 import type { PortfolioData } from '../types';
-import { MapPin, Mail, ExternalLink, Code2, Briefcase, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, Send, FileText, ArrowRight } from 'lucide-react';
+import { MapPin, Mail, ExternalLink, Code2, Briefcase, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, ArrowRight } from 'lucide-react';
 import profileImage from '../assets/profile.jpg';
+
 
 export const Home = () => {
   const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Form State
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [activeProject, setActiveProject] = useState<number>(0);
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState<string>('All');
 
   // Vertical Parallax
   const { scrollYProgress } = useScroll();
   const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 400]);
   const yHeroImg = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const yBg = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
   useEffect(() => {
     let mounted = true;
@@ -46,24 +44,6 @@ export const Home = () => {
     const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || data?.whatsapp?.defaultMessage || 'Hi Vasundhara! I saw your portfolio and would like to connect.')}`;
     window.open(url, '_blank');
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.phone || !form.message) return;
-    setFormStatus('submitting');
-    try {
-      await addSubmission({
-        ...form,
-        status: 'new',
-        createdAt: new Date().toISOString()
-      });
-      setFormStatus('success');
-      setForm({ name: '', email: '', phone: '', message: '' });
-      setTimeout(() => setFormStatus('idle'), 3000);
-    } catch (error) {
-      setFormStatus('error');
-    }
   };
 
   if (loading) {
@@ -103,16 +83,24 @@ export const Home = () => {
 
       <div className="ambient-glow-1"></div>
       <div className="ambient-glow-2"></div>
+
+      {/* Floating Brown Fantasy Embers */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1, overflow: 'hidden' }}>
+        <div className="fantasy-ember" style={{ top: '15%', left: '8%', animationDuration: '7s' }} />
+        <div className="fantasy-ember" style={{ top: '35%', left: '92%', animationDuration: '9s', animationDelay: '1.5s' }} />
+        <div className="fantasy-ember" style={{ top: '55%', left: '14%', animationDuration: '8s', animationDelay: '3s' }} />
+        <div className="fantasy-ember" style={{ top: '75%', left: '80%', animationDuration: '6.5s', animationDelay: '2s' }} />
+        <div className="fantasy-ember" style={{ top: '25%', left: '70%', animationDuration: '10s', animationDelay: '4s' }} />
+        <div className="fantasy-ember" style={{ top: '88%', left: '30%', animationDuration: '7.5s', animationDelay: '0.8s' }} />
+      </div>
       
       {/* 1. HERO - Professional & Premium */}
       <section id="home" className="hero-section">
         <div className="hero-bg-professional">
           <div className="hero-grid-lines"></div>
           <div className="hero-glow-warm"></div>
-          {/* Intense fantasy glow */}
           <div className="fantasy-super-glow"></div>
           
-          {/* Funny transparent templates */}
           <motion.div animate={{ rotate: 360, y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity }} style={{ position: 'absolute', top: '20%', right: '15%', opacity: 0.1, zIndex: 0 }}>
              <Code2 size={100} color="var(--accent-gold)" />
           </motion.div>
@@ -129,7 +117,7 @@ export const Home = () => {
           >
             <motion.div variants={fadeInUp} className="hero-badge">
               <span className="badge-dot"></span>
-              <span>Software Developer</span>
+              <span>Product & Visual Designer</span>
             </motion.div>
             
             <motion.h1 variants={fadeInUp} className="hero-title">
@@ -142,11 +130,9 @@ export const Home = () => {
             </motion.p>
             
             <motion.div variants={fadeInUp} className="hero-skills-mini">
-              <span>Python</span>
-              <span className="dot-separator"></span>
-              <span>Web Development</span>
-              <span className="dot-separator"></span>
-              <span>Data Analytics</span>
+              <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Visual Identity</span>
+              <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Brand Strategy & Design System</span>
+              <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Prototyping & Wireframing</span>
             </motion.div>
 
             <motion.div variants={fadeInUp} className="hero-actions">
@@ -167,7 +153,14 @@ export const Home = () => {
             className="hero-visual"
           >
             <div className="profile-wrapper">
-
+              {/* Astrolabe Celestial Orbit Ring */}
+              <div className="astrolabe-compass-ring">
+                <span className="astrolabe-point" style={{ top: 0, left: '50%', transform: 'translate(-50%, -50%)' }}></span>
+                <span className="astrolabe-point" style={{ bottom: 0, left: '50%', transform: 'translate(-50%, 50%)' }}></span>
+                <span className="astrolabe-point" style={{ left: 0, top: '50%', transform: 'translate(-50%, -50%)' }}></span>
+                <span className="astrolabe-point" style={{ right: 0, top: '50%', transform: 'translate(50%, -50%)' }}></span>
+              </div>
+              <div className="astrolabe-compass-ring-inner"></div>
               <div className="profile-decor-ring"></div>
               <div className="profile-decor-ring-2"></div>
               <div className="profile-image-container">
@@ -183,8 +176,9 @@ export const Home = () => {
               
               <div className="profile-location-badge">
                 <MapPin size={14} className="text-gradient-gold" />
-                <span>Kakinada, India</span>
+                <span>{profile?.location || 'India'}</span>
               </div>
+
             </div>
           </motion.div>
         </div>
@@ -198,283 +192,309 @@ export const Home = () => {
         </motion.div>
       </section>
 
-      {/* 2. ABOUT ME - Editorial/Personal */}
+      {/* 1.5. CREATIVE FLOATING ORBS */}
+      <div className="creative-separator" style={{ position: 'relative', height: '250px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginTop: '2rem' }}>
+        <motion.div 
+          animate={{ y: [-30, 30, -30], x: [-15, 15, -15], rotate: [0, 90, 0] }} 
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          style={{ position: 'absolute', left: '15%', width: '200px', height: '200px', background: 'radial-gradient(circle, var(--accent-orange) 0%, transparent 70%)', filter: 'blur(40px)', opacity: 0.2 }}
+        />
+        <motion.div 
+          animate={{ y: [30, -30, 30], x: [15, -15, 15], rotate: [0, -90, 0] }} 
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ position: 'absolute', right: '15%', width: '250px', height: '250px', background: 'radial-gradient(circle, var(--accent-gold) 0%, transparent 70%)', filter: 'blur(50px)', opacity: 0.15 }}
+        />
+        
+        <div style={{ display: 'flex', gap: '2rem', zIndex: 2, flexWrap: 'wrap', justifyContent: 'center', padding: '0 1rem' }}>
+          {['Visual Identity', 'Brand Strategy', 'Prototyping'].map((text, i) => (
+             <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                style={{
+                  padding: '1rem 2.5rem',
+                  background: 'rgba(255,255,255,0.02)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '100px',
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  fontSize: '0.9rem',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                }}
+                whileHover={{ scale: 1.05, y: -5, borderColor: 'var(--accent-gold)', boxShadow: '0 15px 30px rgba(230,161,71,0.2)' }}
+             >
+               {text}
+             </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. ABOUT ME - PROOF SPLIT CARD */}
       <section id="about" className="about-section" style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="about-bg-pattern"></div>
-
-        {/* Fantasy Classic Background: Floating Double Rings */}
-        <motion.div 
-          animate={{ y: [0, -30, 0], opacity: [0.05, 0.15, 0.05], rotate: [0, 180, 360] }} 
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          style={{ position: 'absolute', top: '10%', right: '5%', zIndex: 0 }}
-        >
-          <div style={{ width: '150px', height: '150px', borderRadius: '50%', border: '1px solid var(--accent-gold)' }}></div>
-          <div style={{ width: '170px', height: '170px', borderRadius: '50%', border: '1px dashed var(--accent-orange)', position: 'absolute', top: '-10px', left: '-10px' }}></div>
-        </motion.div>
-
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer} className="about-grid">
-            <motion.div variants={fadeInUp} className="about-text-area">
-              <h2 className="section-title">About <span className="text-gradient-orange">Me.</span></h2>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer} className="proof-split-card">
+            <motion.div variants={fadeInUp} className="proof-left">
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-gold)', marginBottom: '0.75rem', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>
+                <Sparkles size={16} /> Creative Philosophy
+              </div>
+              <h2 className="section-title">The <span className="text-gradient-orange">Developer.</span></h2>
               <div className="title-underline"></div>
-              <p className="body-large">
-                I am a passionate developer with a strong focus on building scalable web applications and efficient backend systems. With a solid foundation in computer science and practical experience in modern technologies, I bridge the gap between complex logic and seamless user experiences.
-                <br/><br/>
-                My approach treats software engineering not just as programming, but as a craft—where performance, aesthetics, and clean architecture converge.
+              <p className="body-large" style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
+                {profile?.careerObjective || 'A passionate software developer focused on building robust applications.'}
               </p>
+              
+              {/* Special Feature: Core Pillars */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '1.75rem' }}>
+                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> User Empathy</span>
+                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Pixel Precision</span>
+                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Modern Architecture</span>
+              </div>
             </motion.div>
             
-            <motion.div variants={fadeInUp} className="about-info-cards">
-              <div className="info-card">
-                <div className="info-icon cyan-icon"><MapPin size={20} /></div>
-                <div>
-                  <h3 className="info-label">Location</h3>
-                  <p className="info-value">{profile?.location || 'India'}</p>
-                </div>
-              </div>
-              
-              <div className="info-card">
-                <div className="info-icon magenta-icon"><Mail size={20} /></div>
-                <div>
-                  <h3 className="info-label">Email</h3>
-                  <a href={`mailto:${profile?.email}`} className="info-value link-hover">{profile?.email || 'email@example.com'}</a>
-                </div>
-              </div>
+            <motion.div variants={fadeInUp} className="proof-right">
+               <div className="glass-panel">
+                 <div className="info-icon cyan-icon"><MapPin size={24} /></div>
+                 <div>
+                   <p className="info-label">Base Location</p>
+                   <p className="info-value">{profile?.location || 'India'}</p>
+                 </div>
+               </div>
+               <div className="glass-panel mt-4">
+                 <div className="info-icon magenta-icon"><Mail size={24} /></div>
+                 <div>
+                   <p className="info-label">Direct Contact</p>
+                   <a href={`mailto:${profile?.email}`} className="info-value link-hover" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>{profile?.email || 'email@example.com'}</a>
+                 </div>
+               </div>
+               <div className="glass-panel mt-4">
+                 <div className="info-icon violet-icon" style={{ background: 'rgba(230,161,71,0.1)', color: 'var(--accent-gold)' }}><Briefcase size={24} /></div>
+                 <div>
+                   <p className="info-label">Status</p>
+                   <p className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                     <span className="pulse-beacon"></span> Available for Opportunities
+                   </p>
+                 </div>
+               </div>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* 3. SKILLS - Clean Cards */}
-      {skills && skills.length > 0 && (
-        <section id="skills" className="skills-section">
-          
-          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center">
-              <h2 className="section-title">Technical <span className="text-gradient-gold">Skills.</span></h2>
-              <p className="section-subtitle">Technologies I work with to bring ideas to life.</p>
-            </motion.div>
-          </div>
-          
-          <div className="skills-grid-container">
-            <div className="skills-grid">
-              {skills.map((skill, idx) => {
-                let resolvedIcon = skill.iconUrl;
-                if (!resolvedIcon) {
-                  const n = skill.name.toLowerCase();
-                  if (n.includes('react')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg';
-                  else if (n.includes('python')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg';
-                  else if (n.includes('java') && !n.includes('javascript')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg';
-                  else if (n.includes('javascript') || n === 'js') resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg';
-                  else if (n.includes('html')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg';
-                  else if (n.includes('css')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg';
-                  else if (n.includes('sql') || n.includes('database')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original-wordmark.svg';
-                  else if (n.includes('c++') || n === 'cpp') resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg';
-                  else if (n.includes('c ') || n === 'c' || n === 'c programming') resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg';
-                  else if (n.includes('node')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg';
-                  else if (n.includes('git')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg';
-                  else if (n.includes('typescript') || n === 'ts') resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg';
-                  else if (n.includes('mongo')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg';
-                  else if (n.includes('php')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg';
-                  else if (n.includes('aws')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg';
-                  else if (n.includes('docker')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg';
-                  else if (n.includes('figma')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg';
-                  else if (n.includes('linux')) resolvedIcon = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg';
-                }
-                
-                return (
-                <motion.div 
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  key={skill.id || idx} 
-                  className="skill-card-vertical"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ 
-                    y: {
-                      duration: 4 + (idx % 3), 
-                      repeat: Infinity, 
-                      ease: "easeInOut", 
-                      delay: idx * 0.2
-                    },
-                    opacity: { duration: 0.5 }
-                  }}
-                >
-                  <div className="skill-icon-wrap">
-                    {resolvedIcon ? (
-                      <img src={resolvedIcon} alt={skill.name} style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px var(--shadow-strong))' }} />
-                    ) : (
-                      <Code2 size={24} className={idx % 2 === 0 ? "text-gradient-gold" : "text-gradient-orange"} />
-                    )}
-                  </div>
-                  <h3 className="skill-title">{skill.name}</h3>
-                  <span className="skill-cat">{skill.category}</span>
-                </motion.div>
-                );
-              })}
+      {/* 3. SKILLS - INTERACTIVE TECH STACK PILLBOX */}
+      {skills && skills.length > 0 && (() => {
+        const skillCategories = ['All', ...Array.from(new Set(skills.map(s => s.category).filter(Boolean)))];
+        const displayedSkills = selectedSkillCategory === 'All' 
+          ? skills 
+          : skills.filter(s => s.category === selectedSkillCategory);
+
+        return (
+          <section id="skills" className="skills-section">
+            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center">
+                <h2 className="section-title">Interactive <span className="text-gradient-gold">Tech Stack.</span></h2>
+                <p className="section-subtitle">Core technologies I use to craft digital experiences.</p>
+              </motion.div>
+              
+              {/* Alchemy Category Filter */}
+              {skillCategories.length > 1 && (
+                <div className="alchemy-filter-bar">
+                  {skillCategories.map((cat) => (
+                    <button 
+                      key={cat} 
+                      onClick={() => setSelectedSkillCategory(cat)} 
+                      className={`alchemy-filter-btn ${selectedSkillCategory === cat ? 'active' : ''}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <motion.div 
+                initial="hidden" whileInView="visible" viewport={{ once: true }}
+                variants={staggerContainer}
+                className="tech-pillbox-container"
+              >
+                <AnimatePresence mode="popLayout">
+                  {displayedSkills.map((skill, idx) => (
+                    <motion.div 
+                      key={skill.id || skill.name} 
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3 }}
+                      variants={fadeInUp} 
+                      className="tech-pill" 
+                      whileHover={{ scale: 1.05, y: -5 }}
+                    >
+                      <span className="tech-pill-dot" style={{ backgroundColor: idx % 3 === 0 ? 'var(--accent-gold)' : idx % 3 === 1 ? 'var(--accent-orange)' : 'var(--accent-copper)' }}></span>
+                      <span className="tech-pill-name">{skill.name}</span>
+                      <span className="tech-pill-cat">{skill.category}</span>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
-      {/* 4. PROJECTS - Showcase Gallery */}
+      {/* 4. PROJECTS - INTERACTIVE SHOWCASE ACCORDION */}
       {projects && projects.length > 0 && (
-        <section id="project" className="projects-section">
-          
-          {/* Dynamic Background to fill empty space */}
-          <motion.div 
-            animate={{ y: [0, -30, 0], opacity: [0.1, 0.3, 0.1] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ position: 'absolute', top: '10%', right: '5%', width: '300px', height: '300px', background: 'radial-gradient(circle, var(--accent-gold) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none', zIndex: 0 }}
-          />
-          <motion.div 
-            animate={{ y: [0, 40, 0], x: [0, 20, 0], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            style={{ position: 'absolute', bottom: '10%', left: '0%', width: '400px', height: '400px', background: 'radial-gradient(circle, var(--accent-orange) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }}
-          />
-
-          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center">
-              <h2 className="section-title">Selected <span className="text-gradient-orange">Projects.</span></h2>
+        <section id="project" className="projects-section-fullscreen">
+          <div className="container" style={{ position: 'relative', zIndex: 1, paddingBottom: '2rem' }}>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center" style={{ marginBottom: '2rem' }}>
+              <h2 className="section-title">Selected <span className="text-gradient-orange">Works.</span></h2>
             </motion.div>
-            
-            <div className="projects-gallery">
-              {projects.sort((a, b) => a.order - b.order).map((project, index) => (
-                <motion.div 
-                  initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp}
-                  key={project.id || index} 
-                >
-                  <motion.div
-                    className={`project-showcase-card ${index % 2 !== 0 ? 'reverse-layout' : ''}`}
-                    animate={{ y: [0, -15, 0] }}
-                    transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
-                    whileHover={{ scale: 1.02, y: -5 }}
-                  >
-                    <div className="project-visual">
-                    {((project.images && project.images.length > 0) || project.title?.includes('Door')) ? (
-                      <img src={(project.images && project.images.length > 0) ? project.images[0] : '/auto-door-project.jpg'} alt={project.title} className="project-img" loading="lazy" />
-                    ) : (
-                      <div className="project-placeholder">
-                        <Code2 size={48} className="text-gradient-gold opacity-50" />
-                      </div>
-                    )}
-                    <div className="project-visual-overlay"></div>
+          </div>
+          
+          <div className="project-accordion-container">
+            {projects.sort((a, b) => a.order - b.order).slice(0, 5).map((project, index) => (
+              <div 
+                key={project.id || index} 
+                className={`project-accordion-item ${activeProject === index ? 'active' : ''}`}
+                onMouseEnter={() => setActiveProject(index)}
+                onClick={() => setActiveProject(index)}
+              >
+                <div className="accordion-bg">
+                  {((project.images && project.images.length > 0) || project.title?.includes('Door')) ? (
+                    <img src={(project.images && project.images.length > 0) ? project.images[0] : '/auto-door-project.jpg'} alt={project.title} loading="lazy" />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-surface)' }}>
+                      <Code2 size={64} className="text-gradient-gold opacity-50" />
+                    </div>
+                  )}
+                </div>
+                <div className="accordion-overlay"></div>
+                
+                <div className="accordion-content">
+                  <div className="accordion-title-vertical">
+                    {project.title}
                   </div>
-                  
-                  <div className="project-content">
+                  <div className="accordion-details">
                     {project.featured && (
-                      <span className="badge-featured"><Rocket size={12} /> Featured</span>
+                      <span className="badge-featured" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 1rem', background: 'rgba(230, 161, 71, 0.9)', color: '#fff', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}><Rocket size={12} /> Featured</span>
                     )}
-                    <h3 className="project-title">{project.title}</h3>
-                    <p className="project-desc">{project.description}</p>
+                    <h3 className="bento-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>{project.title}</h3>
+                    <p className="bento-desc" style={{ fontSize: '1rem', marginBottom: '1.5rem', maxWidth: '500px' }}>{project.description}</p>
                     
                     {project.technologies && project.technologies.length > 0 && (
-                      <div className="tech-tags">
-                        {project.technologies.map(tech => (
-                          <span key={tech} className="tech-tag">{tech}</span>
+                      <div className="tech-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                        {project.technologies.slice(0,4).map(tech => (
+                          <span key={tech} className="tech-tag" style={{ padding: '0.3rem 0.8rem', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem', color: '#fff' }}>{tech}</span>
                         ))}
                       </div>
                     )}
 
-                    <div className="project-links">
+                    <div className="bento-links">
                       {project.projectUrl && (
-                        <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="link-primary">
-                          <ExternalLink size={16} /> View Live
+                        <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" style={{ background: 'var(--accent-gold)' }}>
+                          <ExternalLink size={20} color="#fff" />
                         </a>
                       )}
                       {project.githubUrl && (
-                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-secondary">
-                          <GitBranch size={16} /> Source Code
+                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" style={{ background: 'var(--text-primary)' }}>
+                          <GitBranch size={20} color="var(--bg-primary)" />
                         </a>
                       )}
-                      </div>
                     </div>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
-      {/* 5. EXPERIENCE - Timeline */}
+      {/* 5. EXPERIENCE - HORIZONTAL JOURNEY */}
       {experience && experience.length > 0 && (
-        <section id="journey" className="experience-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <section id="journey" className="experience-section-fullscreen">
           
-          {/* Fantasy Background: Floating Sparkles */}
           <motion.div 
-            animate={{ y: [0, -50, 0], x: [0, 20, 0], opacity: [0.1, 0.3, 0.1] }} 
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            style={{ position: 'absolute', top: '30%', left: '5%', zIndex: 0 }}
+            animate={{ rotate: 360, opacity: [0.05, 0.15, 0.05] }} 
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            style={{ position: 'absolute', top: '10%', right: '10%', zIndex: 0 }}
           >
-            <Sparkles size={60} color="var(--accent-orange)" />
+            <Sparkles size={100} color="var(--accent-orange)" />
           </motion.div>
 
           <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer} className="timeline-container">
-              <motion.div variants={fadeInUp} className="section-header-left">
-                <div className="icon-box-violet"><Briefcase size={24} /></div>
-                <h2 className="section-title">Professional Experience</h2>
-              </motion.div>
-              
-              <div className="timeline">
-                <div className="timeline-track"></div>
-                {experience.sort((a, b) => a.order - b.order).map((exp, idx) => (
-                  <motion.div key={exp.id || idx} variants={fadeInUp} className="timeline-item">
-                    <div className="timeline-marker"></div>
-                    <div className="timeline-content">
-                      <div className="timeline-header">
-                        <div>
-                          <h3 className="timeline-role">{exp.role}</h3>
-                          <p className="timeline-company text-gradient-ethereal">{exp.company}</p>
-                        </div>
-                        {exp.startDate && exp.endDate && (
-                          <span className="timeline-date">{exp.startDate} — {exp.endDate}</span>
-                        )}
-                      </div>
-                      {exp.description && <p className="timeline-desc">{exp.description}</p>}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center">
+              <h2 className="section-title">Professional <span className="text-gradient-gold">Journey.</span></h2>
             </motion.div>
+          </div>
+          
+          <div className="horizontal-journey-container">
+            {experience.sort((a, b) => a.order - b.order).map((exp, idx) => (
+              <motion.div 
+                key={exp.id || idx} 
+                className="journey-node"
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+              >
+                <div className="journey-milestone-marker">0{idx + 1}</div>
+                <div className="journey-abstract-orb"></div>
+                <h3 className="journey-role">{exp.role}</h3>
+                <h4 className="journey-company">{exp.company}</h4>
+                {exp.startDate && exp.endDate && (
+                  <div>
+                    <span className="journey-date">{exp.startDate} — {exp.endDate}</span>
+                  </div>
+                )}
+                {exp.description && <p className="journey-desc">{exp.description}</p>}
+              </motion.div>
+            ))}
           </div>
         </section>
       )}
 
-      {/* 6. EDUCATION - Elegant Resume Cards */}
+      {/* 6. EDUCATION - World Class Crest Cards */}
       {education && education.length > 0 && (
-        <section id="education" className="education-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <section id="education" className="education-section" style={{ position: 'relative', overflow: 'hidden', padding: '6rem 0' }}>
           
-          {/* Classic Background: Rotating Diamonds */}
           <motion.div 
             animate={{ rotate: [0, 180, 360], opacity: [0.05, 0.15, 0.05] }} 
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             style={{ position: 'absolute', bottom: '15%', right: '10%', zIndex: 0 }}
           >
-            <div style={{ width: '100px', height: '100px', border: '2px solid var(--accent-gold)' }}></div>
-            <div style={{ width: '100px', height: '100px', border: '2px dashed var(--accent-orange)', position: 'absolute', top: '20px', left: '20px' }}></div>
+            <div style={{ width: '120px', height: '120px', border: '2px solid var(--accent-gold)', borderRadius: '30px' }}></div>
+            <div style={{ width: '120px', height: '120px', border: '2px dashed var(--accent-orange)', borderRadius: '30px', position: 'absolute', top: '20px', left: '20px' }}></div>
           </motion.div>
 
           <div className="container" style={{ position: 'relative', zIndex: 1 }}>
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer}>
-              <motion.div variants={fadeInUp} className="section-header-left">
+              <motion.div variants={fadeInUp} className="section-header-left" style={{ marginBottom: '3rem' }}>
                 <div className="icon-box-magenta"><GraduationCap size={24} /></div>
-                <h2 className="section-title">Education</h2>
+                <div>
+                  <h2 className="section-title" style={{ marginBottom: '0.25rem' }}>Education & <span className="text-gradient-gold">Milestones.</span></h2>
+                  <p className="section-subtitle">Academic foundations and qualifications.</p>
+                </div>
               </motion.div>
               
               <div className="education-grid">
                 {education.sort((a, b) => a.order - b.order).map((edu, idx) => (
                   <motion.div key={edu.id || idx} variants={fadeInUp} className="education-card">
-                    <h3 className="edu-degree">{edu.degree}</h3>
-                    <p className="edu-inst">{edu.institution}</p>
-                    <div className="edu-meta">
-                      <span className="edu-meta-item"><MapPin size={14}/> {edu.location}</span>
-                      <span className="edu-meta-item">{edu.startYear} — {edu.endYear}</span>
+                    <div className="education-crest-icon">
+                      <GraduationCap size={28} />
                     </div>
-                    <div className="edu-scores">
-                      {edu.cgpa && <span className="score-badge">CGPA <strong className="text-gradient-orange">{edu.cgpa}</strong></span>}
-                      {edu.percentage && <span className="score-badge">Score <strong className="text-gradient-orange">{edu.percentage}</strong></span>}
+                    <h3 className="edu-degree" style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--text-primary)' }}>{edu.degree}</h3>
+                    <p className="edu-inst" style={{ color: 'var(--accent-gold)', fontWeight: 600, fontSize: '1.05rem', marginBottom: '1.25rem' }}>{edu.institution}</p>
+                    <div className="edu-meta" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      <span className="edu-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={14} color="var(--accent-orange)"/> {edu.location}</span>
+                      <span className="edu-meta-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🗓️ {edu.startYear} — {edu.endYear}</span>
+                    </div>
+                    <div className="edu-scores" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                      {edu.cgpa && <span className="score-badge-gold"><Sparkles size={12} /> CGPA: {edu.cgpa}</span>}
+                      {edu.percentage && <span className="score-badge-gold"><Sparkles size={12} /> Score: {edu.percentage}</span>}
                     </div>
                   </motion.div>
                 ))}
@@ -483,68 +503,6 @@ export const Home = () => {
           </div>
         </section>
       )}
-
-      {/* 7. CONTACT - Strong Final CTA */}
-      <section id="contact" className="contact-section" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="contact-bg-effect"></div>
-        
-        {/* Fantasy Background: Ambient Glowing Orb */}
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }} 
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          style={{ position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px', background: 'radial-gradient(circle, var(--accent-gold) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0, pointerEvents: 'none' }}
-        />
-
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer} className="contact-layout">
-            
-            <motion.div variants={fadeInUp} className="contact-cta">
-              <h2 className="cta-title">Let's create <br/><span className="text-gradient-ethereal">something amazing.</span></h2>
-              <p className="cta-desc">
-                I am currently available for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
-              </p>
-              
-              <div className="cta-buttons">
-                <button onClick={() => openWhatsApp()} className="btn-whatsapp-large">
-                  <MessageCircle size={22} /> Chat on WhatsApp
-                </button>
-                {profile?.resumeUrl && (
-                  <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-outline-large">
-                    <FileText size={20} /> View Resume
-                  </a>
-                )}
-              </div>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="contact-form-container">
-              <h3 className="form-title">Send an Email</h3>
-              <form onSubmit={handleContactSubmit} className="contact-form">
-                <div className="input-group">
-                  <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-                  <label>Your Name</label>
-                </div>
-                <div className="input-group">
-                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-                  <label>Email Address</label>
-                </div>
-                <div className="input-group">
-                  <input required type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
-                  <label>Phone Number</label>
-                </div>
-                <div className="input-group">
-                  <textarea required rows={4} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}></textarea>
-                  <label>Message</label>
-                </div>
-                <button type="submit" disabled={formStatus === 'submitting'} className="btn-submit">
-                  {formStatus === 'submitting' ? 'Sending...' : formStatus === 'success' ? 'Message Sent!' : (
-                    <><Send size={18} /> Send Message</>
-                  )}
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Floating WhatsApp CTA */}
       <AnimatePresence>
@@ -558,6 +516,7 @@ export const Home = () => {
             onClick={() => openWhatsApp()}
             className="btn-floating-wa"
             aria-label="Contact on WhatsApp"
+            style={{ position: 'fixed', bottom: '2rem', right: '2rem', width: '60px', height: '60px', borderRadius: '50%', background: '#25D366', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(37,211,102,0.4)', zIndex: 100, cursor: 'pointer' }}
           >
             <MessageCircle size={28} />
           </motion.button>
