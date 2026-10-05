@@ -10,10 +10,11 @@ import {
   Scan, 
   Sparkles, 
   CheckCircle2, 
-  MessageCircle, 
   Layers, 
-  Code2
+  Code2,
+  ChevronDown
 } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import type { Project } from '../types';
 import './ProjectZoomModal.css';
 
@@ -97,7 +98,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="project-zoom-overlay">
+        <div className="project-zoom-overlay" data-lenis-prevent="true">
           {/* Backdrop Blur */}
           <motion.div 
             className="project-zoom-backdrop"
@@ -110,6 +111,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
           {/* Modal Container */}
           <motion.div 
             className="project-zoom-modal-dialog"
+            data-lenis-prevent="true"
             initial={{ opacity: 0, scale: 0.92, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 20 }}
@@ -140,8 +142,12 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
               </button>
             </div>
 
-            {/* Modal Body: Split Stage */}
-            <div className="zoom-modal-body">
+            {/* Modal Body: Split Stage with Animated Smooth Scroll */}
+            <div 
+              className="zoom-modal-body" 
+              data-lenis-prevent="true"
+              onWheel={(e) => e.stopPropagation()}
+            >
               
               {/* LEFT: Interactive Zoom Inspection Viewport */}
               <div className="zoom-stage-col">
@@ -219,7 +225,45 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
               </div>
 
               {/* RIGHT: Stand Out Breakdown & Architecture */}
-              <div className="zoom-details-col">
+              <div 
+                className="zoom-details-col" 
+                data-lenis-prevent="true"
+                onWheel={(e) => e.stopPropagation()}
+              >
+                {/* Interactive Animated Section Quick Jump Bar */}
+                <div className="zoom-section-navigator">
+                  <button 
+                    type="button" 
+                    onClick={() => document.getElementById('zoom-summary')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
+                    className="zoom-nav-pill"
+                  >
+                    Overview
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => document.getElementById('zoom-standout')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
+                    className="zoom-nav-pill"
+                  >
+                    Stand Out
+                  </button>
+                  {project.technologies && project.technologies.length > 0 && (
+                    <button 
+                      type="button" 
+                      onClick={() => document.getElementById('zoom-tech')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
+                      className="zoom-nav-pill"
+                    >
+                      Tech Stack
+                    </button>
+                  )}
+                  <button 
+                    type="button" 
+                    onClick={() => document.getElementById('zoom-actions')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })}
+                    className="zoom-nav-pill"
+                  >
+                    Connect
+                  </button>
+                </div>
+
                 <div className="zoom-details-content">
                   
                   {project.featured && (
@@ -237,7 +281,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
                   <div className="zoom-section-divider" />
 
                   {/* Deep Project Narrative */}
-                  <div className="zoom-narrative-block">
+                  <div id="zoom-summary" className="zoom-narrative-block">
                     <h4 className="zoom-block-label">
                       <Layers size={14} /> Executive Summary
                     </h4>
@@ -245,7 +289,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
                   </div>
 
                   {/* Why it Stands Out (The Stand Out Manifesto) */}
-                  <div className="zoom-standout-box">
+                  <div id="zoom-standout" className="zoom-standout-box">
                     <h4 className="zoom-standout-heading">
                       <Sparkles size={14} className="text-gradient-orange" /> 
                       WHY THIS PROJECT STANDS OUT
@@ -268,7 +312,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
 
                   {/* Technologies Stack */}
                   {project.technologies && project.technologies.length > 0 && (
-                    <div className="zoom-tech-block">
+                    <div id="zoom-tech" className="zoom-tech-block">
                       <h4 className="zoom-block-label">Tech Stack & Frameworks</h4>
                       <div className="zoom-tech-chips">
                         {project.technologies.map(tech => (
@@ -295,7 +339,7 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
                   )}
 
                   {/* Action Links & Inquiry */}
-                  <div className="zoom-actions-row">
+                  <div id="zoom-actions" className="zoom-actions-row">
                     {project.projectUrl && (
                       <a 
                         href={project.projectUrl} 
@@ -326,10 +370,16 @@ export const ProjectZoomModal: React.FC<ProjectZoomModalProps> = ({
                         onClick={() => onWhatsAppInquiry(project.title)}
                         className="zoom-action-btn whatsapp"
                       >
-                        <MessageCircle size={16} />
-                        <span>Inquire on Project</span>
+                        <WhatsAppIcon size={16} />
+                        <span>Inquire on WhatsApp</span>
                       </button>
                     )}
+                  </div>
+
+                  {/* Floating Scroll Indicator */}
+                  <div className="zoom-scroll-animated-hint">
+                    <span>Scroll to explore full architectural details</span>
+                    <ChevronDown size={14} className="bounce-arrow" />
                   </div>
 
                 </div>

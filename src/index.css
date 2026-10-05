@@ -23,7 +23,9 @@
   --shadow-strong: rgba(0, 0, 0, 0.1);
   
   --grid-line: rgba(0, 0, 0, 0.04);
-  --nav-bg: rgba(250, 246, 240, 0.85);
+  --nav-bg: rgba(246, 241, 234, 0.65);
+  --nav-bg-idle: rgba(246, 241, 234, 0.40);
+  --nav-blur: 10px;
   
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -55,10 +57,12 @@
   --glass-border-light: rgba(255, 195, 120, 0.09);
   
   --shadow-glow: 0 0 70px rgba(245, 140, 50, 0.22);
-  --shadow-strong: 0 25px 60px rgba(8, 4, 2, 0.75);
+  --shadow-strong: rgba(0, 0, 0, 0.45);
   
   --grid-line: rgba(245, 179, 66, 0.04);
-  --nav-bg: rgba(20, 12, 8, 0.88);
+  --nav-bg: rgba(18, 11, 8, 0.68);
+  --nav-bg-idle: rgba(18, 11, 8, 0.40);
+  --nav-blur: 10px;
 }
 
 *, *::before, *::after {
@@ -449,6 +453,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media(max-width: 767px) {
   .profile-location-badge { left: 1rem; bottom: 1rem; }
+  .scroll-indicator { display: none !important; }
 }
 
 .scroll-indicator {
@@ -991,16 +996,79 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media(max-width: 768px) {
+  .projects-section-fullscreen {
+    height: auto;
+    max-height: none;
+    padding: 3.5rem 0 3rem;
+    overflow: visible;
+  }
   .project-accordion-container {
     flex-direction: column;
     padding: 0 1rem;
-    height: calc(100svh - 150px);
+    height: auto;
+    gap: 1rem;
   }
-  .accordion-title-vertical {
-    bottom: 50%;
-    left: 2rem;
+  .project-accordion-item {
+    flex: none;
+    width: 100%;
+    min-height: 72px;
+    border-radius: var(--radius-lg);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .project-accordion-item.active {
+    min-height: 480px;
+    box-shadow: 0 15px 40px rgba(212, 106, 42, 0.3), inset 0 0 0 1px var(--accent-gold);
+  }
+  .project-accordion-item:not(.active) {
+    height: 72px;
+    min-height: 72px;
+  }
+  .project-accordion-item:not(.active) .accordion-content {
+    padding: 0.9rem 1.25rem;
+    justify-content: center;
+  }
+  .project-accordion-item:not(.active) .accordion-title-vertical {
+    position: static;
     writing-mode: horizontal-tb;
-    transform: translateY(50%);
+    transform: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .project-accordion-item.active .accordion-content {
+    padding: 1.75rem 1.25rem;
+    justify-content: flex-end;
+  }
+  .project-accordion-item.active .bento-title {
+    font-size: 1.5rem !important;
+  }
+  .project-accordion-item.active .bento-desc {
+    font-size: 0.9rem !important;
+    line-height: 1.5;
+    margin-bottom: 0.9rem !important;
+  }
+  .btn-zoom-standout-feature {
+    padding: 0.6rem 1rem !important;
+    font-size: 0.78rem !important;
+  }
+  .project-deck-navigator {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    margin-top: 1.25rem;
+  }
+  .deck-gem-pill {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -1014,7 +1082,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 .giant-footer-title {
-  font-size: clamp(3.5rem, 8vw, 8rem);
+  font-size: clamp(2rem, 7vw, 8rem);
   font-weight: 800;
   line-height: 1;
   text-transform: uppercase;
@@ -1070,6 +1138,16 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.9rem;
 }
 @media(max-width: 767px) {
+  .giant-footer { padding: 4.5rem 0 3rem; }
+  .giant-footer-title { margin-bottom: 1.25rem; -webkit-text-stroke: 1.5px var(--glass-border-light); }
+  .footer-cta-box {
+    padding: 2.25rem 1.25rem;
+    margin: -2rem auto 2.5rem;
+    border-radius: var(--radius-lg);
+  }
+  .footer-cta-box .section-title {
+    font-size: 1.45rem !important;
+  }
   .footer-bottom { flex-direction: column; gap: 1rem; }
 }
 
@@ -1511,8 +1589,34 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
-  .journey-node { min-width: 85vw; padding: 2rem; }
-  .horizontal-journey-container { padding: 0 1.5rem; gap: 2rem; }
+  .journey-node {
+    min-width: calc(100vw - 3rem);
+    max-width: calc(100vw - 3rem);
+    height: auto;
+    min-height: 340px;
+    padding: 1.75rem 1.25rem;
+  }
+  .horizontal-journey-container {
+    padding: 1rem 1.25rem;
+    gap: 1.25rem;
+    height: auto;
+  }
+  .journey-role {
+    font-size: 1.45rem;
+    line-height: 1.25;
+  }
+  .journey-company {
+    font-size: 1.05rem;
+    margin-bottom: 0.85rem;
+  }
+  .journey-date {
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+  }
+  .journey-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
 }
 
 
@@ -1663,6 +1767,75 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 4px 20px rgba(245, 179, 66, 0.4);
+}
+
+@media (max-width: 768px) {
+  .alchemy-filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0.35rem 1rem 0.85rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .alchemy-filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .alchemy-filter-btn {
+    flex-shrink: 0;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+  .tech-pillbox-container {
+    gap: 0.55rem;
+  }
+  .tech-pill {
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    gap: 0.45rem;
+  }
+  .tech-pill-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Floating WhatsApp Button */
+.btn-floating-wa {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.45);
+  z-index: 80;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-floating-wa:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6);
+}
+
+@media (max-width: 767px) {
+  .btn-floating-wa {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    right: 1.25rem;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  }
 }
 
 /* Project Deck Navigator */

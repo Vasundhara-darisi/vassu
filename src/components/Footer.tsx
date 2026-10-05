@@ -1,4 +1,5 @@
-import { Mail, MessageCircle } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 import { getWhatsAppUrl } from '../utils/whatsapp';
 
 export const Footer = () => {
@@ -24,7 +25,7 @@ export const Footer = () => {
               rel="noopener noreferrer" 
               className="btn-secondary"
             >
-              <MessageCircle size={20} /> WhatsApp
+              <WhatsAppIcon size={20} /> WhatsApp
             </a>
           </div>
         </div>

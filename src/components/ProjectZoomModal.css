@@ -117,11 +117,46 @@
   grid-template-columns: 1.15fr 1fr;
   overflow-y: auto;
   max-height: calc(90vh - 75px);
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-gold) rgba(255, 255, 255, 0.04);
+}
+
+/* Custom Creative Glowing Animated Scrollbar */
+.zoom-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.zoom-modal-body::-webkit-scrollbar-track {
+  background: rgba(18, 10, 6, 0.4);
+  border-radius: 99px;
+  margin: 8px 0;
+}
+
+.zoom-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-orange) 100%);
+  border-radius: 99px;
+  box-shadow: 0 0 10px rgba(245, 179, 66, 0.5);
+  transition: all 0.3s ease;
+}
+
+.zoom-modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-orange) 0%, #ff5722 100%);
+  box-shadow: 0 0 16px rgba(255, 125, 59, 0.9);
+}
+
+@media (min-width: 901px) {
+  .zoom-stage-col {
+    position: sticky;
+    top: 0;
+    height: fit-content;
+  }
 }
 
 @media (max-width: 900px) {
   .zoom-modal-body {
     grid-template-columns: 1fr;
+    max-height: calc(92vh - 65px);
   }
 }
 
@@ -685,4 +720,125 @@
 
 .bento-icon-btn:hover {
   transform: translateY(-2px) scale(1.08);
+}
+
+/* Quick Jump Section Navigator */
+.zoom-section-navigator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.35rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border-light);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.zoom-section-navigator::-webkit-scrollbar {
+  display: none;
+}
+
+.zoom-nav-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.zoom-nav-pill:hover {
+  color: var(--text-primary);
+  background: rgba(230, 161, 71, 0.15);
+}
+
+.zoom-nav-pill:active {
+  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-orange) 100%);
+  color: #fff;
+}
+
+/* Floating Scroll Down Animated Hint */
+.zoom-scroll-animated-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-pill);
+  background: rgba(230, 161, 71, 0.08);
+  border: 1px dashed rgba(230, 161, 71, 0.25);
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-top: 1.5rem;
+  animation: pulseHint 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulseHint {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; border-color: rgba(230, 161, 71, 0.5); }
+}
+
+.bounce-arrow {
+  animation: bounceDown 1.6s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* Mobile Responsiveness for ProjectZoomModal */
+@media (max-width: 768px) {
+  .project-zoom-overlay {
+    padding: 0.5rem;
+  }
+  .project-zoom-modal-dialog {
+    max-height: 95vh;
+    border-radius: var(--radius-lg);
+  }
+  .zoom-modal-header {
+    padding: 0.75rem 1rem;
+  }
+  .zoom-modal-tagline {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+  .zoom-stage-col {
+    padding: 1rem;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border-light);
+  }
+  .zoom-viewport {
+    height: 230px;
+  }
+  .zoom-details-col {
+    padding: 1.25rem 1rem;
+  }
+  .zoom-project-title {
+    font-size: 1.5rem;
+  }
+  .zoom-standout-box {
+    padding: 1.25rem 1rem;
+  }
+  .zoom-actions-row {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .zoom-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

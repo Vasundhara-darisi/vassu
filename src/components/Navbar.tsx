@@ -21,9 +21,9 @@ export const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -52,38 +52,19 @@ export const Navbar = () => {
   return (
     <>
       <header className={`nav-header ${isScrolled ? 'scrolled' : ''}`}>
-        <div style={{
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          padding: '0.75rem 1.5rem',
-          background: isScrolled ? 'var(--nav-bg)' : 'rgba(25,15,5,0.4)',
-          backdropFilter: 'blur(30px)',
-          border: isScrolled ? '1px solid var(--glass-border-light)' : '1px solid rgba(255,255,255,0.05)',
-          borderRadius: 'var(--radius-pill)',
-          boxShadow: isScrolled ? '0 10px 40px var(--shadow-strong)' : '0 10px 30px rgba(0,0,0,0.2)'
-        }}>
-          <NavLink to="/" onClick={scrollToTop} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)', fontFamily: 'Clash Display', textDecoration: 'none' }}>
+        <div className="nav-pill">
+          <NavLink to="/" onClick={scrollToTop} className="nav-brand">
             <Terminal size={20} className="text-gradient-gold" />
-            <span style={{ display: 'none' }} className="nav-brand-text">Vasundhara</span>
+            <span className="nav-brand-text">Vasundhara</span>
           </NavLink>
 
           {/* Desktop Nav */}
-          <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }} className="desktop-nav">
+          <nav className="desktop-nav">
             {navLinks.map((link) => (
               <a 
                 key={link.name} 
                 href={link.path}
-                className="nav-link-hover"
-                style={{
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'var(--text-secondary)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  transition: 'all var(--transition-fast)',
-                  textDecoration: 'none'
-                }}
+                className="nav-link-item"
               >
                 {link.name}
               </a>
@@ -155,9 +136,10 @@ export const Navbar = () => {
                 left: 0,
                 right: 0,
                 height: '75vh',
+                maxHeight: '620px',
                 background: 'var(--bg-secondary)',
                 zIndex: 100,
-                padding: '2rem',
+                padding: '1.25rem 1.5rem 2rem',
                 borderTop: '1px solid var(--accent-orange)',
                 borderTopLeftRadius: '2rem',
                 borderTopRightRadius: '2rem',
@@ -166,14 +148,15 @@ export const Navbar = () => {
                 boxShadow: '0 -20px 60px rgba(230,161,71,0.15)'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
-                <span style={{ fontWeight: 600, fontSize: '1.5rem', fontFamily: 'Clash Display', color: 'var(--text-primary)' }}>Navigate</span>
+              <div style={{ width: '40px', height: '4px', background: 'var(--glass-border)', borderRadius: '2px', margin: '0 auto 1.25rem', opacity: 0.8 }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <span style={{ fontWeight: 600, fontSize: '1.35rem', fontFamily: 'Clash Display', color: 'var(--text-primary)' }}>Navigate</span>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
                   className="icon-btn-hover"
                   style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}
                 >
-                  <X size={24} />
+                  <X size={22} />
                 </button>
               </div>
 
@@ -216,7 +199,7 @@ export const Navbar = () => {
           left: 50%;
           transform: translateX(-50%);
           z-index: 50;
-          transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+          transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
           width: calc(100% - 2rem);
           max-width: 800px;
           top: 2rem;
@@ -224,14 +207,61 @@ export const Navbar = () => {
         .nav-header.scrolled {
           top: 1rem;
         }
+        .nav-pill {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.75rem 1.5rem;
+          background: var(--nav-bg-idle);
+          backdrop-filter: blur(var(--nav-blur, 10px));
+          -webkit-backdrop-filter: blur(var(--nav-blur, 10px));
+          border: 1px solid var(--glass-border-light);
+          border-radius: var(--radius-pill);
+          box-shadow: 0 8px 30px var(--shadow-strong);
+          transition: background 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                      border-color 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                      box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .nav-header.scrolled .nav-pill {
+          background: var(--nav-bg);
+          border-color: var(--glass-border);
+          box-shadow: 0 12px 40px var(--shadow-strong);
+        }
+        .nav-brand {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 600;
+          font-size: 1.25rem;
+          letter-spacing: -0.02em;
+          color: var(--text-primary);
+          font-family: 'Clash Display', sans-serif;
+          text-decoration: none;
+        }
+        .nav-brand-text {
+          display: block !important;
+        }
+        .nav-link-item {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          transition: all var(--transition-fast);
+          text-decoration: none;
+        }
+        .nav-link-item:hover {
+          color: var(--text-primary) !important;
+          transform: translateY(-2px);
+        }
         .icon-btn-hover {
           background: transparent;
           border: none;
           color: var(--text-primary);
           cursor: pointer;
           display: flex;
-          alignItems: center;
-          justifyContent: center;
+          align-items: center;
+          justify-content: center;
           padding: 0.5rem;
           border-radius: 50%;
           transition: all 0.3s ease;
@@ -243,15 +273,10 @@ export const Navbar = () => {
         .icon-btn-hover:active {
           transform: scale(0.95);
         }
-        .nav-link-hover:hover {
-          color: var(--text-primary) !important;
-          transform: translateY(-2px);
-        }
         .desktop-nav {
           display: none !important;
-        }
-        .nav-brand-text {
-          display: block !important;
+          gap: 1.5rem;
+          align-items: center;
         }
         
         /* MOBILE RESPONSIVE CLICK-UP DOCK */
@@ -264,11 +289,19 @@ export const Navbar = () => {
           }
           .nav-header {
             top: auto !important;
-            bottom: 2rem !important;
+            bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)) !important;
+            width: calc(100% - 1.5rem);
+            max-width: 480px;
           }
           .nav-header.scrolled {
-            bottom: 1.5rem !important;
+            bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
             top: auto !important;
+          }
+          .nav-pill {
+            padding: 0.6rem 1.15rem;
+          }
+          .nav-brand-text {
+            font-size: 1.1rem;
           }
         }
         

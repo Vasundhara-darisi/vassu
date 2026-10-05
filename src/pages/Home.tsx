@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
 import { getPortfolioData } from '../firebase/services';
 import type { PortfolioData, Project } from '../types';
-import { MapPin, ExternalLink, Code2, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, ArrowRight, ZoomIn, Scan, Maximize2 } from 'lucide-react';
+import { MapPin, ExternalLink, Code2, GraduationCap, Sparkles, Rocket, GitBranch, ArrowRight, ZoomIn, Scan, Maximize2 } from 'lucide-react';
+import { WhatsAppIcon } from '../components/WhatsAppIcon';
 import profileImage from '../assets/profile.jpg';
 import { AboutSection } from '../components/AboutSection';
 import { ProjectZoomModal } from '../components/ProjectZoomModal';
@@ -17,10 +18,10 @@ export const Home = () => {
   const [selectedSkillCategory, setSelectedSkillCategory] = useState<string>('All');
   const [selectedZoomProject, setSelectedZoomProject] = useState<Project | null>(null);
 
-  // Vertical Parallax
+  // Vertical Parallax (subtle range to avoid overlapping on mobile viewports)
   const { scrollYProgress } = useScroll();
-  const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 400]);
-  const yHeroImg = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const yHeroText = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const yHeroImg = useTransform(scrollYProgress, [0, 1], [0, 60]);
 
   useEffect(() => {
     let mounted = true;
@@ -143,7 +144,7 @@ export const Home = () => {
                 View Projects <ArrowRight size={18} />
               </a>
               <button onClick={() => openWhatsApp('Hi Vasundhara! I saw your portfolio and would like to connect.')} className="btn-secondary">
-                <MessageCircle size={18} /> Contact Me
+                <WhatsAppIcon size={18} /> Contact Me
               </button>
             </motion.div>
           </motion.div>
@@ -414,6 +415,22 @@ export const Home = () => {
             ))}
           </div>
 
+          {/* Interactive Project Deck Navigator */}
+          <div className="project-deck-navigator">
+            {projects.sort((a, b) => a.order - b.order).slice(0, 5).map((project, idx) => (
+              <button
+                key={project.id || idx}
+                type="button"
+                onClick={() => setActiveProject(idx)}
+                className={`deck-gem-pill ${activeProject === idx ? 'active' : ''}`}
+                aria-label={`View project ${project.title}`}
+              >
+                <span>0{idx + 1}</span>
+                <span className="deck-gem-name">{project.title.split(' ')[0]}</span>
+              </button>
+            ))}
+          </div>
+
           {/* ZOOM IN. STAND OUT. Modal Inspector */}
           <ProjectZoomModal 
             project={selectedZoomProject}
@@ -527,9 +544,8 @@ export const Home = () => {
             onClick={() => openWhatsApp('Hi Vasundhara! I saw your portfolio and would like to connect.')}
             className="btn-floating-wa"
             aria-label="Contact on WhatsApp"
-            style={{ position: 'fixed', bottom: '2rem', right: '2rem', width: '60px', height: '60px', borderRadius: '50%', background: '#25D366', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(37,211,102,0.4)', zIndex: 100, cursor: 'pointer' }}
           >
-            <MessageCircle size={28} />
+            <WhatsAppIcon size={30} />
           </motion.button>
         )}
       </AnimatePresence>
