@@ -98,7 +98,15 @@ export const getPortfolioData = async (): Promise<PortfolioData> => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data() as PortfolioData;
+      const remoteData = docSnap.data() as Partial<PortfolioData>;
+      return {
+        ...defaultData,
+        ...remoteData,
+        whatsapp: {
+          ...defaultData.whatsapp,
+          ...(remoteData.whatsapp || {})
+        }
+      } as PortfolioData;
     } else {
       return defaultData;
     }

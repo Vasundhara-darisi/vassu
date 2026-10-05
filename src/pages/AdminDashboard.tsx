@@ -8,6 +8,7 @@ import { LogOut, Save, Loader2, Check, MessageCircle, Users, Settings, Trash2, P
 import { ProfileEditor } from '../components/admin/ProfileEditor';
 import { ArrayEditor } from '../components/admin/ArrayEditor';
 import type { FieldConfig } from '../components/admin/ArrayEditor';
+import { openWhatsAppChat } from '../utils/whatsapp';
 
 const skillsFields: FieldConfig[] = [
   { key: 'name', label: 'Skill Name', type: 'text' },
@@ -140,9 +141,7 @@ export const AdminDashboard = () => {
   };
 
   const openWhatsApp = (phone: string, text: string = '') => {
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    openWhatsAppChat(phone, text);
   };
 
   if (loading || !data) {

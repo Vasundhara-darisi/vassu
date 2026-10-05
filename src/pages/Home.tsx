@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
 import { getPortfolioData } from '../firebase/services';
-import type { PortfolioData } from '../types';
-import { MapPin, Mail, ExternalLink, Code2, Briefcase, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, ArrowRight } from 'lucide-react';
+import type { PortfolioData, Project } from '../types';
+import { MapPin, ExternalLink, Code2, GraduationCap, Sparkles, Rocket, GitBranch, MessageCircle, ArrowRight, ZoomIn, Scan, Maximize2 } from 'lucide-react';
 import profileImage from '../assets/profile.jpg';
+import { AboutSection } from '../components/AboutSection';
+import { ProjectZoomModal } from '../components/ProjectZoomModal';
+import { openWhatsAppChat } from '../utils/whatsapp';
 
 
 export const Home = () => {
@@ -12,6 +15,7 @@ export const Home = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeProject, setActiveProject] = useState<number>(0);
   const [selectedSkillCategory, setSelectedSkillCategory] = useState<string>('All');
+  const [selectedZoomProject, setSelectedZoomProject] = useState<Project | null>(null);
 
   // Vertical Parallax
   const { scrollYProgress } = useScroll();
@@ -41,9 +45,8 @@ export const Home = () => {
 
   const openWhatsApp = (text: string = '') => {
     const phoneNumber = data?.whatsapp?.phoneNumber || '917729805155';
-    const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
-    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || data?.whatsapp?.defaultMessage || 'Hi Vasundhara! I saw your portfolio and would like to connect.')}`;
-    window.open(url, '_blank');
+    const message = text.trim() || data?.whatsapp?.defaultMessage?.trim() || 'Hi Vasundhara! I saw your portfolio and would like to connect.';
+    openWhatsAppChat(phoneNumber, message);
   };
 
   if (loading) {
@@ -139,7 +142,7 @@ export const Home = () => {
               <a href="#project" className="btn-primary">
                 View Projects <ArrowRight size={18} />
               </a>
-              <button onClick={() => openWhatsApp()} className="btn-secondary">
+              <button onClick={() => openWhatsApp('Hi Vasundhara! I saw your portfolio and would like to connect.')} className="btn-secondary">
                 <MessageCircle size={18} /> Contact Me
               </button>
             </motion.div>
@@ -234,57 +237,11 @@ export const Home = () => {
         </div>
       </div>
 
-      {/* 2. ABOUT ME - PROOF SPLIT CARD */}
-      <section id="about" className="about-section" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="about-bg-pattern"></div>
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={staggerContainer} className="proof-split-card">
-            <motion.div variants={fadeInUp} className="proof-left">
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-gold)', marginBottom: '0.75rem', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>
-                <Sparkles size={16} /> Creative Philosophy
-              </div>
-              <h2 className="section-title">The <span className="text-gradient-orange">Developer.</span></h2>
-              <div className="title-underline"></div>
-              <p className="body-large" style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
-                {profile?.careerObjective || 'A passionate software developer focused on building robust applications.'}
-              </p>
-              
-              {/* Special Feature: Core Pillars */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '1.75rem' }}>
-                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> User Empathy</span>
-                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Pixel Precision</span>
-                <span className="hero-fantasy-capsule"><span className="badge-dot"></span> Modern Architecture</span>
-              </div>
-            </motion.div>
-            
-            <motion.div variants={fadeInUp} className="proof-right">
-               <div className="glass-panel">
-                 <div className="info-icon cyan-icon"><MapPin size={24} /></div>
-                 <div>
-                   <p className="info-label">Base Location</p>
-                   <p className="info-value">{profile?.location || 'India'}</p>
-                 </div>
-               </div>
-               <div className="glass-panel mt-4">
-                 <div className="info-icon magenta-icon"><Mail size={24} /></div>
-                 <div>
-                   <p className="info-label">Direct Contact</p>
-                   <a href={`mailto:${profile?.email}`} className="info-value link-hover" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>{profile?.email || 'email@example.com'}</a>
-                 </div>
-               </div>
-               <div className="glass-panel mt-4">
-                 <div className="info-icon violet-icon" style={{ background: 'rgba(230,161,71,0.1)', color: 'var(--accent-gold)' }}><Briefcase size={24} /></div>
-                 <div>
-                   <p className="info-label">Status</p>
-                   <p className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                     <span className="pulse-beacon"></span> Available for Opportunities
-                   </p>
-                 </div>
-               </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      {/* 2. ABOUT ME - INTERACTIVE SHOWCASE & ANIMATIONS */}
+      <AboutSection 
+        profile={profile} 
+        onConnect={() => openWhatsApp('Hi Vasundhara! I saw your portfolio and would like to connect about opportunities.')}
+      />
 
       {/* 3. SKILLS - INTERACTIVE TECH STACK PILLBOX */}
       {skills && skills.length > 0 && (() => {
@@ -346,12 +303,22 @@ export const Home = () => {
         );
       })()}
 
-      {/* 4. PROJECTS - INTERACTIVE SHOWCASE ACCORDION */}
+      {/* 4. PROJECTS - INTERACTIVE SHOWCASE ACCORDION with 'ZOOM IN. STAND OUT.' */}
       {projects && projects.length > 0 && (
         <section id="project" className="projects-section-fullscreen">
-          <div className="container" style={{ position: 'relative', zIndex: 1, paddingBottom: '2rem' }}>
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center" style={{ marginBottom: '2rem' }}>
-              <h2 className="section-title">Selected <span className="text-gradient-orange">Works.</span></h2>
+          <div className="container" style={{ position: 'relative', zIndex: 1, paddingBottom: '1.5rem' }}>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={fadeInUp} className="section-header-center" style={{ marginBottom: '1.5rem' }}>
+              <div className="work-zoom-eyebrow">
+                <span className="zoom-reticle-dot"><Scan size={14} /></span>
+                <span className="zoom-eyebrow-text">ZOOM IN. STAND OUT.</span>
+                <span className="pulse-beacon" style={{ width: 8, height: 8 }} />
+              </div>
+              <h2 className="section-title" style={{ marginTop: '0.4rem', marginBottom: '0.5rem' }}>
+                Selected <span className="text-gradient-orange">Works.</span>
+              </h2>
+              <p className="work-tagline">
+                <strong>ZOOM IN</strong> to inspect engineering details. Built to <strong>STAND OUT</strong> in performance & craftsmanship.
+              </p>
             </motion.div>
           </div>
           
@@ -373,35 +340,71 @@ export const Home = () => {
                   )}
                 </div>
                 <div className="accordion-overlay"></div>
+
+                {/* Floating ZOOM IN prompt chip on hover */}
+                <div 
+                  className="accordion-zoom-prompt"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedZoomProject(project);
+                  }}
+                  title="Click to Zoom In & Stand Out"
+                >
+                  <ZoomIn size={14} />
+                  <span>ZOOM IN</span>
+                </div>
                 
                 <div className="accordion-content">
                   <div className="accordion-title-vertical">
                     {project.title}
                   </div>
                   <div className="accordion-details">
-                    {project.featured && (
-                      <span className="badge-featured" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 1rem', background: 'rgba(230, 161, 71, 0.9)', color: '#fff', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}><Rocket size={12} /> Featured</span>
-                    )}
-                    <h3 className="bento-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>{project.title}</h3>
-                    <p className="bento-desc" style={{ fontSize: '1rem', marginBottom: '1.5rem', maxWidth: '500px' }}>{project.description}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                      {project.featured && (
+                        <span className="badge-featured" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 1rem', background: 'rgba(230, 161, 71, 0.9)', color: '#fff', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                          <Rocket size={12} /> Featured
+                        </span>
+                      )}
+                      <span className="badge-standout">
+                        <Scan size={12} /> STAND OUT
+                      </span>
+                    </div>
+
+                    <h3 className="bento-title" style={{ fontSize: '2rem', marginBottom: '0.85rem' }}>{project.title}</h3>
+                    <p className="bento-desc" style={{ fontSize: '1rem', marginBottom: '1.25rem', maxWidth: '520px' }}>{project.description}</p>
                     
                     {project.technologies && project.technologies.length > 0 && (
-                      <div className="tech-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                        {project.technologies.slice(0,4).map(tech => (
+                      <div className="tech-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.35rem' }}>
+                        {project.technologies.slice(0, 4).map(tech => (
                           <span key={tech} className="tech-tag" style={{ padding: '0.3rem 0.8rem', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem', color: '#fff' }}>{tech}</span>
                         ))}
                       </div>
                     )}
 
-                    <div className="bento-links">
+                    <div className="bento-links" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      {/* The prominent 'ZOOM IN. STAND OUT.' Interactive Feature Button */}
+                      <button 
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedZoomProject(project);
+                        }}
+                        className="btn-zoom-standout-feature"
+                        title="Zoom In to inspect every detail"
+                      >
+                        <ZoomIn size={16} />
+                        <span>ZOOM IN. STAND OUT.</span>
+                        <Maximize2 size={13} style={{ opacity: 0.7 }} />
+                      </button>
+
                       {project.projectUrl && (
-                        <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" style={{ background: 'var(--accent-gold)' }}>
-                          <ExternalLink size={20} color="#fff" />
+                        <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="bento-icon-btn" title="Live Project" style={{ background: 'var(--accent-gold)' }}>
+                          <ExternalLink size={18} color="#fff" />
                         </a>
                       )}
                       {project.githubUrl && (
-                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" style={{ background: 'var(--text-primary)' }}>
-                          <GitBranch size={20} color="var(--bg-primary)" />
+                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="bento-icon-btn" title="GitHub Code" style={{ background: 'var(--text-primary)' }}>
+                          <GitBranch size={18} color="var(--bg-primary)" />
                         </a>
                       )}
                     </div>
@@ -410,6 +413,14 @@ export const Home = () => {
               </div>
             ))}
           </div>
+
+          {/* ZOOM IN. STAND OUT. Modal Inspector */}
+          <ProjectZoomModal 
+            project={selectedZoomProject}
+            isOpen={!!selectedZoomProject}
+            onClose={() => setSelectedZoomProject(null)}
+            onWhatsAppInquiry={(title) => openWhatsApp(`Hi Vasundhara! I explored your "${title}" project through the Zoom In inspector and would like to connect.`)}
+          />
         </section>
       )}
 
@@ -513,7 +524,7 @@ export const Home = () => {
             exit={{ scale: 0, opacity: 0, y: 20 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => openWhatsApp()}
+            onClick={() => openWhatsApp('Hi Vasundhara! I saw your portfolio and would like to connect.')}
             className="btn-floating-wa"
             aria-label="Contact on WhatsApp"
             style={{ position: 'fixed', bottom: '2rem', right: '2rem', width: '60px', height: '60px', borderRadius: '50%', background: '#25D366', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(37,211,102,0.4)', zIndex: 100, cursor: 'pointer' }}

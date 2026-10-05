@@ -1,4 +1,5 @@
 import { Mail, MessageCircle } from 'lucide-react';
+import { getWhatsAppUrl } from '../utils/whatsapp';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -14,10 +15,15 @@ export const Footer = () => {
           <p className="body-large" style={{ marginBottom: '2rem' }}>Ready to take your digital presence to the next level? Drop a message or connect on WhatsApp.</p>
           
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="mailto:darisi.vasundhara@gmail.com" className="btn-primary">
+            <a href="mailto:darisivasundhara1@gmail.com" className="btn-primary">
               <Mail size={20} /> Email Me
             </a>
-            <a href="https://wa.me/917729805155" target="_blank" rel="noopener noreferrer" className="btn-secondary">
+            <a 
+              href={getWhatsAppUrl('917729805155', 'Hi Vasundhara! I saw your portfolio and would like to connect.')} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-secondary"
+            >
               <MessageCircle size={20} /> WhatsApp
             </a>
           </div>
